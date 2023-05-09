@@ -33,16 +33,18 @@ public class MyGrid
   int height;
   float cellSize;
   Transform parent;
+  LayerMask layerMask;
   CellData[,] gridArray;
   Vector3 originPosition;
 
-  public MyGrid(int width, int height, float cellSize, Vector3 originPosition, Transform parent)
+  public MyGrid(int width, int height, float cellSize, Vector3 originPosition, Transform parent, LayerMask layerMask)
   {
     this.width = width;
     this.height = height;
     this.cellSize = cellSize;
     this.originPosition = originPosition;
     this.parent = parent;
+    this.layerMask = layerMask;
 
     gridArray = new CellData[width, height];
     // debugTextArray = new TextMesh[width, height];
@@ -73,11 +75,17 @@ public class MyGrid
   {
     Ray ray = Camera.main.ScreenPointToRay(screenPos);
     RaycastHit hit;
-    Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity);
+
+    Physics.Raycast(
+      origin: ray.origin,
+      direction: ray.direction,
+      hitInfo: out hit,
+      maxDistance: Mathf.Infinity,
+      layerMask: this.layerMask.value
+    );
 
     if (hit.collider == null)
     {
-      Debug.Log("no hit");
       return new Vector2(-1, -1);
     }
 
@@ -144,6 +152,28 @@ public class MyGrid
     }
   }
 
+  public void SetValue(Vector3 worldPos, CellData value)
+  {
+    Vector2 xy = GetXY(worldPos);
+
+    if (xy.x < 0 && xy.y < 0) return;
+
+    SetValue((int)xy.x, (int)xy.y, value);
+  }
+
+  public void SetValue(Vector3 worldPos, string fieldName, object value)
+  {
+    Vector2 xy = GetXY(worldPos);
+
+    if (xy.x < 0 && xy.y < 0) return;
+
+    CellData data = GetValue((int)xy.x, (int)xy.y);
+
+    data?.GetType()?.GetField(fieldName)?.SetValue(data, value);
+
+    SetValue((int)xy.x, (int)xy.y, data);
+  }
+
   public void UpdateGridRendering()
   {
     for (int x = 0; x < gridArray.GetLength(0); x++)
@@ -161,30 +191,20 @@ public class MyGrid
         {
           Debug.Log("updating sprite");
           gridArray[x, y].renderers.spriteRenderer.sprite = gridArray[x, y].sprite;
-          //make sure the sprite renderes lowest y value is still above ground
+
+          //make sure the sprite renderes lowest y value is still above its layer
           Vector3 currentPos = gridArray[x, y].renderers.spriteRenderer.transform.position;
           Bounds bounds = gridArray[x, y].renderers.spriteRenderer.bounds;
-          gridArray[x, y].renderers.spriteRenderer.transform.position = new Vector3(currentPos.x, bounds.size.y / 2, currentPos.z);
+
+          if (currentPos.y <= originPosition.y + bounds.size.y / 2)
+          {
+            currentPos.y = originPosition.y + bounds.size.y / 2;
+          }
+
+          gridArray[x, y].renderers.spriteRenderer.transform.position = currentPos;
         }
       }
     }
-  }
-
-  public void SetValue(Vector3 worldPos, CellData value)
-  {
-    Vector2 xy = GetXY(worldPos);
-    SetValue((int)xy.x, (int)xy.y, value);
-  }
-
-  public void SetValue(Vector3 worldPos, string fieldName, object value)
-  {
-    Vector2 xy = GetXY(worldPos);
-
-    CellData data = GetValue((int)xy.x, (int)xy.y);
-
-    data.GetType().GetField(fieldName).SetValue(data, value);
-
-    SetValue((int)xy.x, (int)xy.y, data);
   }
 
   public CellData GetValue(int x, int y)

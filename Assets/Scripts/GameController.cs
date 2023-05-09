@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
-public class Testing : MonoBehaviour
+public class GameController : MonoBehaviour
 {
-  MyGrid grid;
   public InputActionAsset inputAction;
   public Transform parent;
-  public MeshRenderer meshRenderer;
+  public GridLayer layerToTarget;
   public Sprite spriteToPlace;
   public int numRows = 20;
   public int numCols = 20;
@@ -24,21 +23,14 @@ public class Testing : MonoBehaviour
     inputAction.Disable();
   }
 
-  // Start is called before the first frame update
   void Start()
   {
-    Bounds bounds = meshRenderer.bounds;
-    float cellSize = bounds.size.x / numCols;
-    Vector3 originPoint = new Vector3(bounds.min.x, meshRenderer.transform.position.y, bounds.min.z);
-
-    grid = new MyGrid(numCols, numRows, cellSize, originPoint, parent);
-
     inputAction.FindActionMap("Building").FindAction("Click").performed += ctx => MouseClick(ctx);
   }
 
   void MouseClick(CallbackContext ctx)
   {
     Vector2 mousePosition = inputAction.FindAction("Pos").ReadValue<Vector2>();
-    grid.SetValue(mousePosition, "sprite", spriteToPlace);
+    layerToTarget.grid.SetValue(mousePosition, "sprite", spriteToPlace);
   }
 }
