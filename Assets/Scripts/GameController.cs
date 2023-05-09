@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
   public InputActionAsset inputAction;
   public Transform parent;
   public GridLayer layerToTarget;
+  public List<GridLayer> gridLayers;
   public Sprite spriteToPlace;
   public int numRows = 20;
   public int numCols = 20;
@@ -32,5 +33,21 @@ public class GameController : MonoBehaviour
   {
     Vector2 mousePosition = inputAction.FindAction("Pos").ReadValue<Vector2>();
     layerToTarget.grid.SetValue(mousePosition, "sprite", spriteToPlace);
+  }
+
+  void Update()
+  {
+    //deactivate any grid layers that aren't the active one
+    foreach (GridLayer gridLayer in gridLayers)
+    {
+      if (gridLayer == layerToTarget && !gridLayer.gameObject.activeSelf)
+      {
+        gridLayer.gameObject.SetActive(true);
+      }
+      else if (gridLayer != layerToTarget && gridLayer.gameObject.activeSelf)
+      {
+        gridLayer.gameObject.SetActive(false);
+      }
+    }
   }
 }

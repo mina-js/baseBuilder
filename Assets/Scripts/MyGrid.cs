@@ -54,7 +54,8 @@ public class MyGrid
       for (int y = 0; y < gridArray.GetLength(1); y++)
       {
         gridArray[x, y] = new CellData { id = (x + "_" + y).ToString(), value = x * width + y, renderers = new CellRenderers() };
-        gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], null, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
+        //TODO: the grid appearing is actually useful, but needs to bea ble to turn off easily, figure it out baby
+        // gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], null, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
         gridArray[x, y].renderers.spriteRenderer = CreateSpriteRenderer(gridArray[x, y], parent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 0);
 
         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
