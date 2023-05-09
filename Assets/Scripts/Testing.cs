@@ -10,6 +10,7 @@ public class Testing : MonoBehaviour
   public InputActionAsset inputAction;
   public Transform parent;
   public MeshRenderer meshRenderer;
+  public Sprite spriteToPlace;
   public int numRows = 20;
   public int numCols = 20;
 
@@ -38,6 +39,6 @@ public class Testing : MonoBehaviour
   void MouseClick(CallbackContext ctx)
   {
     Vector2 mousePosition = inputAction.FindAction("Pos").ReadValue<Vector2>();
-    grid.SetValue(mousePosition, new CellData { value = 666 });
+    grid.SetValue(mousePosition, "sprite", spriteToPlace);
   }
 }

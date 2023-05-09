@@ -12,6 +12,9 @@ public class CellData
   //The actual data, will store wall info on that cell, maybe info about what items are in it, etc.
   [field: SerializeField]
   public int value;
+
+  [field: SerializeField]
+  public Sprite sprite;
 }
 
 
@@ -20,6 +23,8 @@ public class CellRenderers
 {
   [field: SerializeField]
   public TextMesh textMesh;
+  [field: SerializeField]
+  public SpriteRenderer spriteRenderer;
 }
 
 public class MyGrid
@@ -48,6 +53,8 @@ public class MyGrid
       {
         gridArray[x, y] = new CellData { id = (x + "_" + y).ToString(), value = x * width + y, renderers = new CellRenderers() };
         gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], null, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
+        gridArray[x, y].renderers.spriteRenderer = CreateSpriteRenderer(gridArray[x, y], parent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 0);
+
         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
       }
@@ -80,6 +87,26 @@ public class MyGrid
     float y = vec2offset.y / (cellSize);
 
     return new Vector2(Mathf.FloorToInt(x), Mathf.FloorToInt(y));
+  }
+
+  SpriteRenderer CreateSpriteRenderer(CellData data, Transform parent = null, Vector3 localPos = default(Vector3), int sortingOrder = 0)
+  {
+    GameObject gameObject = new GameObject("world_sprite", typeof(SpriteRenderer));
+    Transform transform = gameObject.transform;
+    transform.SetParent(parent, false);
+
+    //scale x and y by 100
+    transform.localScale = new Vector3(200, 200, 1);
+    //rotate about y axis 45 degrees
+    transform.localEulerAngles = new Vector3(0, 45, 0);
+    //make sure the bottom is above the gorund
+    transform.localPosition = new Vector3(localPos.x, localPos.y + 0.5f, localPos.z);
+
+    SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+    // transform.localPosition = localPos;
+    spriteRenderer.sortingOrder = sortingOrder;
+
+    return spriteRenderer;
   }
 
   private TextMesh CreateWorldText(CellData data, Transform parent = null, Vector3 localPos = default(Vector3), int fontSize = 40, Color color = default(Color), TextAnchor textAnchor = TextAnchor.MiddleCenter, int sortingOrder = 0)
@@ -129,9 +156,15 @@ public class MyGrid
           Debug.Log("updating text");
           gridArray[x, y].renderers.textMesh.text = gridArray[x, y].value.ToString();
         }
-        else
+
+        if (gridArray[x, y].renderers.spriteRenderer != null)
         {
-          Debug.Log("textmesh is null for " + x + ", " + y);
+          Debug.Log("updating sprite");
+          gridArray[x, y].renderers.spriteRenderer.sprite = gridArray[x, y].sprite;
+          //make sure the sprite renderes lowest y value is still above ground
+          Vector3 currentPos = gridArray[x, y].renderers.spriteRenderer.transform.position;
+          Bounds bounds = gridArray[x, y].renderers.spriteRenderer.bounds;
+          gridArray[x, y].renderers.spriteRenderer.transform.position = new Vector3(currentPos.x, bounds.size.y / 2, currentPos.z);
         }
       }
     }
@@ -141,6 +174,17 @@ public class MyGrid
   {
     Vector2 xy = GetXY(worldPos);
     SetValue((int)xy.x, (int)xy.y, value);
+  }
+
+  public void SetValue(Vector3 worldPos, string fieldName, object value)
+  {
+    Vector2 xy = GetXY(worldPos);
+
+    CellData data = GetValue((int)xy.x, (int)xy.y);
+
+    data.GetType().GetField(fieldName).SetValue(data, value);
+
+    SetValue((int)xy.x, (int)xy.y, data);
   }
 
   public CellData GetValue(int x, int y)
