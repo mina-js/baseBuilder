@@ -1,0 +1,54 @@
+{
+    "name": "InputAction",
+    "maps": [
+        {
+            "name": "Building",
+            "id": "acd7e4f1-fba6-4f23-be8b-83eaec63bd3e",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "a8bcbb02-32f7-45ea-8a24-0e4c2d915d00",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pos",
+                    "type": "Value",
+                    "id": "bf487e92-ab71-4364-b6ba-fcf9cbae6c34",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d708c6fc-dc34-4ec9-901a-3ec45b9d5eb0",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "048142df-e922-4324-86e8-8b658217ed36",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
