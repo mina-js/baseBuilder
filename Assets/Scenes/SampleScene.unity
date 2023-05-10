@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccff718e494254727961ab2ff366b728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placementMode: 0
+  placementMode: 2
   inputAction: {fileID: -944628639613478452, guid: 687faf0c7102c4cef80dafd4107ac0ee, type: 3}
   debugTextParent: {fileID: 429141026}
   renderersParent: {fileID: 1770151484}
@@ -624,7 +624,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1385621243
 MeshRenderer:
   m_ObjectHideFlags: 0

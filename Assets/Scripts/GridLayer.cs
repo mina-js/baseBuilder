@@ -14,12 +14,15 @@ public class GridLayer : MonoBehaviour
   public Transform renderersParent;
   public GameObject highlightPrefab;
 
+  public Builder builder;
+
   void Start()
   {
     layerMask = LayerMask.GetMask(gameObject.name.ToLower());
     gameController = GameObject.Find("GameController").GetComponent<GameController>();
     meshRenderer = GetComponent<MeshRenderer>();
     InitializeGrid();
+    builder = new Builder(grid);
   }
 
   void InitializeGrid()

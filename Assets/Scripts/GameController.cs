@@ -34,35 +34,27 @@ public class GameController : MonoBehaviour
   [Range(0, 2)]
   public int upgradeableChoiceIdx;
 
-  void OnEnable()
-  {
-    inputAction.Enable();
-  }
-
-  void OnDisable()
-  {
-    inputAction.Disable();
-  }
 
   void Start()
   {
     isTouching = false;
-    placementMode = PlacementMode.Upgrading;
+
     upgradeableChoiceIdx = 0;
     isUpgrading = upgradeable != null;
 
+    BindInputActions();
+  }
+
+  void BindInputActions()
+  {
     inputAction.FindActionMap("Building").FindAction("Click").performed += ctx => { StartCoroutine(OnTouch(ctx)); };
-    inputAction.FindActionMap("Building").FindAction("Click").canceled += ctx => OnTouchEnd(ctx);
+    inputAction.FindActionMap("Building").FindAction("Click").canceled += ctx => { isTouching = false; };
 
     inputAction.FindAction("Pos").performed += context => screenPos = context.ReadValue<Vector2>();
   }
 
-
-
   IEnumerator OnTouch(CallbackContext ctx)
   {
-    //if (!gameController.isGameRunning()) yield break;
-
     OnStartOfTouch(ctx);
 
     while (isTouching)
@@ -74,7 +66,6 @@ public class GameController : MonoBehaviour
     OnTouchEnd(ctx);
   }
 
-
   void OnStartOfTouch(CallbackContext ctx = default(CallbackContext))
   {
     isTouching = true;
@@ -85,25 +76,24 @@ public class GameController : MonoBehaviour
     }
     else if (isBuilding())
     {
-      //start building stuff...
+      layerToTarget.builder.startBuilding(screenPos);
     }
   }
 
   void OnDrag(CallbackContext ctx = default(CallbackContext))
   {
     if (!isBuilding()) return;
-
-    //do the building stuff...
+    layerToTarget.builder.dragWhileBuilding(screenPos);
   }
 
   void OnTouchEnd(CallbackContext ctx = default(CallbackContext))
   {
-    Debug.Log("touch ended!");
     isTouching = false;
-
-    //save the built stuff
+    if (!isBuilding()) return;
+    layerToTarget.builder.endBuilding();
   }
 
+  //TODO: this would be from a button press or something
   void OnValidate()
   {
     if (isUpgrading && layerToTarget.id == upgradeable.gridId && isAddingUpgrades())
@@ -154,6 +144,16 @@ public class GameController : MonoBehaviour
 
       }
     }
+  }
+
+  void OnEnable()
+  {
+    inputAction.Enable();
+  }
+
+  void OnDisable()
+  {
+    inputAction.Disable();
   }
 
   bool isAddingUpgrades()
