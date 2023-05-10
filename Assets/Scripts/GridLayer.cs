@@ -33,7 +33,7 @@ public class GridLayer : MonoBehaviour
     debugParent = gameController.debugTextParent.Find(id);
     renderersParent = gameController.renderersParent.Find(id);
 
-    grid = new CellGrid(id, gameController.numCols, gameController.numRows, cellSize, originPoint, debugParent, renderersParent, layerMask);
+    grid = new CellGrid(id, gameController.numCols, gameController.numRows, cellSize, originPoint, debugParent, renderersParent, layerMask, gameController.isDebugging);
   }
 
   public void HighlightCell(Vector2Int cell)

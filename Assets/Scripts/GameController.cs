@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
   public Sprite spriteToPlace;
   public int numRows = 20;
   public int numCols = 20;
+  public bool isDebugging = true;
   public Upgradeable upgradeable;
   bool isUpgrading;
 
@@ -57,7 +58,6 @@ public class GameController : MonoBehaviour
     {
       layerToTarget.placeSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx]);
     }
-
   }
 
   void HighlightUpgradeable()
