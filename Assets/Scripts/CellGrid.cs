@@ -148,8 +148,6 @@ public class CellGrid
 
     data?.GetType()?.GetField(fieldName)?.SetValue(data, value);
 
-    Debug.Log("in setting" + data.numBlocks);
-
     SetValue(x, y, data, XZOffsetFromTileMin);
   }
 
@@ -158,13 +156,11 @@ public class CellGrid
     //for now it just keeps numbers going, will eventually update sprites too
     if (isDebugging && gridArray[x, z].renderers.textMesh != null)
     {
-      Debug.Log("updating text");
       gridArray[x, z].renderers.textMesh.text = gridArray[x, z].value.ToString();
     }
 
     if (gridArray[x, z].renderers.spriteRenderer != null)
     {
-      Debug.Log("updating sprite");
       gridArray[x, z].renderers.spriteRenderer.sprite = gridArray[x, z].sprite;
 
       //make sure the sprite renderes lowest y value is still above its layer

@@ -13,7 +13,6 @@ public class GridLayer : MonoBehaviour
   public Transform debugParent;
   public Transform renderersParent;
   public GameObject highlightPrefab;
-
   public Builder builder;
 
   void Start()
@@ -41,7 +40,6 @@ public class GridLayer : MonoBehaviour
 
   public void HighlightCell(Vector2Int cell)
   {
-    Debug.Log("should highlight " + cell);
     Vector3 worldPos = grid.GetWorldPosition((int)cell.x, (int)cell.y);
 
     //shift to center in the cell using grid.cellsize

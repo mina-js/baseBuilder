@@ -5,13 +5,9 @@ using UnityEngine;
 public class Builder
 {
   CellGrid grid;
-
   Transform newBuild;
-
   Transform parent;
-
   GridLayer layer; //only for coroutine stuff
-
   bool isAdding = false;
   float timeOutForAdding = 0.1f;
 
@@ -35,7 +31,6 @@ public class Builder
 
   public void endBuilding()
   {
-    Debug.Log("ENDED");
     newBuild = null;
   }
 
@@ -57,7 +52,6 @@ public class Builder
     CellData cellDataAtPos = grid.GetValue((int)gridPos.x, (int)gridPos.y);
 
     int numBlocks = cellDataAtPos == null ? 0 : cellDataAtPos.numBlocks;
-    Debug.Log("num blocks here!!!!" + numBlocks + " at " + screenPos + " data " + cellDataAtPos?.value);
     newBuild = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
 
     //bounce the y position up by the numBlocks * height of the block
