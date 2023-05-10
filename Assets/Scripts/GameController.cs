@@ -47,25 +47,28 @@ public class GameController : MonoBehaviour
 
   void Update()
   {
+    HighlightUpgradeable();
     HideOrShowLayers();
-    if (upgradeable != null && !isUpgrading) HighlightUpgradeable();
-    if (upgradeable == null && isUpgrading)
-    {
-      isUpgrading = false;
-      layerToTarget.RemoveCellHighlights();
-    }
-    if (isUpgrading)
-    {
-      layerToTarget.placeSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx]);
-    }
   }
 
   void HighlightUpgradeable()
   {
-    isUpgrading = true;
-    GridLayer gridWithUpgradeable = gridLayers.Find(gridLayer => gridLayer.id == upgradeable.gridId);
-    layerToTarget = gridWithUpgradeable;
-    layerToTarget.HighlightCell(upgradeable.cell);
+    if (upgradeable != null && !isUpgrading)
+    {
+      isUpgrading = true;
+      GridLayer gridWithUpgradeable = gridLayers.Find(gridLayer => gridLayer.id == upgradeable.gridId);
+      layerToTarget = gridWithUpgradeable;
+      layerToTarget.HighlightCell(upgradeable.cell);
+    }
+    else if (upgradeable == null && isUpgrading)
+    {
+      isUpgrading = false;
+      layerToTarget.RemoveCellHighlights();
+    }
+    else if (isUpgrading)
+    {
+      layerToTarget.PlaceSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx]);
+    }
   }
 
   void HideOrShowLayers()

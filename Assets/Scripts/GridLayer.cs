@@ -50,12 +50,12 @@ public class GridLayer : MonoBehaviour
     highlight.transform.SetParent(gameController.highlightsParent, false);
   }
 
-  internal void placeSpriteAtCell(Vector2Int cell, Sprite sprite)
+  public void PlaceSpriteAtCell(Vector2Int cell, Sprite sprite)
   {
     grid.SetValue(cell.x, cell.y, "sprite", sprite);
   }
 
-  internal void RemoveCellHighlights()
+  public void RemoveCellHighlights()
   {
     foreach (Transform child in gameController.highlightsParent)
     {
