@@ -69,7 +69,8 @@ public class CellGrid
     return new Vector3(x, 0, z) * cellSize + originPosition;
   }
 
-  public Vector2 GetXZ(Vector2 screenPos)
+  //Raycasts from the screen position to the grid layer thats set for this
+  public Vector3 GetLayerInterceptWorldPoint(Vector2 screenPos)
   {
     Ray ray = Camera.main.ScreenPointToRay(screenPos);
 
@@ -83,14 +84,33 @@ public class CellGrid
 
     if (hit.collider == null)
     {
-      return new Vector2(-1, -1);
+      return new Vector3(-1, -1, -1);
     }
 
-    Vector3 offset = hit.point - originPosition;
+    return hit.point;
+  }
+
+  public Vector2 GetXZ(Vector2 screenPos)
+  {
+    Vector3 interceptPoint = GetLayerInterceptWorldPoint(screenPos);
+
+    if (interceptPoint.x < 0 && interceptPoint.y < 0 && interceptPoint.z < 0) return new Vector2(-1, -1);
+
+    Vector3 offset = interceptPoint - originPosition;
     Vector2 vec2offset = new Vector2(offset.x, offset.z);
     vec2offset /= cellSize;
 
     return new Vector2(Mathf.FloorToInt(vec2offset.x), Mathf.FloorToInt(vec2offset.y));
+  }
+
+  //Snaps to the world position of the cell that the screenPos is over, useful for placing things on that strong grid
+  public Vector3 GetSnappedWorldPos(Vector2 screenPos)
+  {
+    Vector2 gridPos = GetXZ(screenPos);
+
+    if (gridPos.x < 0 && gridPos.y < 0) return new Vector3(-1, -1, -1);
+
+    return GetWorldPosition((int)gridPos.x, (int)gridPos.y);
   }
 
   //Base version of SetValue, other overloads just lead here
