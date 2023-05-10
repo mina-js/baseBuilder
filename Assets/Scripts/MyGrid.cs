@@ -29,21 +29,28 @@ public class CellRenderers
 
 public class MyGrid
 {
+  string id;
   int width;
   int height;
-  float cellSize;
-  Transform parent;
+  public float cellSize;
+  Transform debugTextParent;
+  Transform renderersParent;
   LayerMask layerMask;
   CellData[,] gridArray;
   Vector3 originPosition;
 
-  public MyGrid(int width, int height, float cellSize, Vector3 originPosition, Transform parent, LayerMask layerMask)
+  public MyGrid(string id, int width, int height, float cellSize, Vector3 originPosition, Transform debugTextParent, Transform renderersParent, LayerMask layerMask)
   {
+    this.id = id;
+
     this.width = width;
     this.height = height;
     this.cellSize = cellSize;
     this.originPosition = originPosition;
-    this.parent = parent;
+
+    this.debugTextParent = debugTextParent;
+    this.renderersParent = renderersParent;
+
     this.layerMask = layerMask;
 
     gridArray = new CellData[width, height];
@@ -55,8 +62,8 @@ public class MyGrid
       {
         gridArray[x, y] = new CellData { id = (x + "_" + y).ToString(), value = x * width + y, renderers = new CellRenderers() };
         //TODO: the grid appearing is actually useful, but needs to bea ble to turn off easily, figure it out baby
-        // gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], null, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
-        gridArray[x, y].renderers.spriteRenderer = CreateSpriteRenderer(gridArray[x, y], parent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 0);
+        gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], debugTextParent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
+        gridArray[x, y].renderers.spriteRenderer = CreateSpriteRenderer(gridArray[x, y], renderersParent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 0);
 
         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
@@ -67,7 +74,7 @@ public class MyGrid
     Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
   }
 
-  private Vector3 GetWorldPosition(int x, int y)
+  public Vector3 GetWorldPosition(int x, int y)
   {
     return new Vector3(x, 0, y) * cellSize + originPosition;
   }
@@ -105,7 +112,7 @@ public class MyGrid
     transform.SetParent(parent, false);
 
     //scale x and y by 100
-    transform.localScale = new Vector3(200, 200, 1);
+    transform.localScale = new Vector3(100, 100, 1);
     //rotate about y axis 45 degrees
     transform.localEulerAngles = new Vector3(0, 45, 0);
     //make sure the bottom is above the gorund
@@ -120,7 +127,7 @@ public class MyGrid
 
   private TextMesh CreateWorldText(CellData data, Transform parent = null, Vector3 localPos = default(Vector3), int fontSize = 40, Color color = default(Color), TextAnchor textAnchor = TextAnchor.MiddleCenter, int sortingOrder = 0)
   {
-    if (parent == null) parent = this.parent;
+    //if (parent == null) parent = this.parent;
 
     GameObject gameObject = new GameObject("World_Text", typeof(TextMesh));
 
@@ -168,11 +175,16 @@ public class MyGrid
 
     if (xy.x < 0 && xy.y < 0) return;
 
-    CellData data = GetValue((int)xy.x, (int)xy.y);
+    SetValue((int)xy.x, (int)xy.y, fieldName, value);
+  }
+
+  public void SetValue(int x, int y, string fieldName, object value)
+  {
+    CellData data = GetValue(x, y);
 
     data?.GetType()?.GetField(fieldName)?.SetValue(data, value);
 
-    SetValue((int)xy.x, (int)xy.y, data);
+    SetValue(x, y, data);
   }
 
   public void UpdateGridRendering()

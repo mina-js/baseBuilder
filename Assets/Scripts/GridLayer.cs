@@ -1,13 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GridLayer : MonoBehaviour
 {
+  public string id;
   MeshRenderer meshRenderer;
   LayerMask layerMask;
   public MyGrid grid;
   GameController gameController;
+  public Transform debugParent;
+  public Transform renderersParent;
+  public GameObject highlightPrefab;
 
   void Start()
   {
@@ -24,8 +29,37 @@ public class GridLayer : MonoBehaviour
     Bounds bounds = meshRenderer.bounds;
     float cellSize = bounds.size.x / gameController.numCols;
     Vector3 originPoint = new Vector3(bounds.min.x, meshRenderer.transform.position.y, bounds.min.z);
-    grid = new MyGrid(gameController.numCols, gameController.numRows, cellSize, originPoint, gameController.parent, layerMask);
+
+    debugParent = gameController.debugTextParent.Find(id);
+    renderersParent = gameController.renderersParent.Find(id);
+
+    grid = new MyGrid(id, gameController.numCols, gameController.numRows, cellSize, originPoint, debugParent, renderersParent, layerMask);
   }
 
-  //TODO: a method that hides the mesh if not the active layer, so you can see other stuff?
+  public void HighlightCell(Vector2Int cell)
+  {
+    Debug.Log("should highlight " + cell);
+    Vector3 worldPos = grid.GetWorldPosition((int)cell.x, (int)cell.y);
+
+    //shift to center in the cell using grid.cellsize
+    worldPos.x += grid.cellSize / 2;
+    worldPos.z += grid.cellSize / 2;
+
+    //instantiate the highlightPrefab at worldPos and rotate by 90 degrees on x axis
+    GameObject highlight = Instantiate(highlightPrefab, worldPos, Quaternion.Euler(90, 0, 0));
+    highlight.transform.SetParent(gameController.highlightsParent, false);
+  }
+
+  internal void placeSpriteAtCell(Vector2Int cell, Sprite sprite)
+  {
+    grid.SetValue(cell.x, cell.y, "sprite", sprite);
+  }
+
+  internal void RemoveCellHighlights()
+  {
+    foreach (Transform child in gameController.highlightsParent)
+    {
+      Destroy(child.gameObject);
+    }
+  }
 }
