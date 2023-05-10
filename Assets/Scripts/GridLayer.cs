@@ -8,7 +8,7 @@ public class GridLayer : MonoBehaviour
   public string id;
   MeshRenderer meshRenderer;
   LayerMask layerMask;
-  public MyGrid grid;
+  public CellGrid grid;
   GameController gameController;
   public Transform debugParent;
   public Transform renderersParent;
@@ -33,7 +33,7 @@ public class GridLayer : MonoBehaviour
     debugParent = gameController.debugTextParent.Find(id);
     renderersParent = gameController.renderersParent.Find(id);
 
-    grid = new MyGrid(id, gameController.numCols, gameController.numRows, cellSize, originPoint, debugParent, renderersParent, layerMask);
+    grid = new CellGrid(id, gameController.numCols, gameController.numRows, cellSize, originPoint, debugParent, renderersParent, layerMask);
   }
 
   public void HighlightCell(Vector2Int cell)

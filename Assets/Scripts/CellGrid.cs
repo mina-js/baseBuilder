@@ -2,32 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellData
-{
-  [field: SerializeField]
-  public string id;
-  [field: SerializeField]
-  public CellRenderers renderers;
-
-  //The actual data, will store wall info on that cell, maybe info about what items are in it, etc.
-  [field: SerializeField]
-  public int value;
-
-  [field: SerializeField]
-  public Sprite sprite;
-}
-
-
-//this will eventually include a sprite renderer, maybe mesh renderers?
-public class CellRenderers
-{
-  [field: SerializeField]
-  public TextMesh textMesh;
-  [field: SerializeField]
-  public SpriteRenderer spriteRenderer;
-}
-
-public class MyGrid
+public class CellGrid
 {
   string id;
   int width;
@@ -39,7 +14,7 @@ public class MyGrid
   CellData[,] gridArray;
   Vector3 originPosition;
 
-  public MyGrid(string id, int width, int height, float cellSize, Vector3 originPosition, Transform debugTextParent, Transform renderersParent, LayerMask layerMask)
+  public CellGrid(string id, int width, int height, float cellSize, Vector3 originPosition, Transform debugTextParent, Transform renderersParent, LayerMask layerMask)
   {
     this.id = id;
 
@@ -54,8 +29,12 @@ public class MyGrid
     this.layerMask = layerMask;
 
     gridArray = new CellData[width, height];
-    // debugTextArray = new TextMesh[width, height];
 
+    CreateGrid();
+  }
+
+  void CreateGrid()
+  {
     for (int x = 0; x < gridArray.GetLength(0); x++)
     {
       for (int y = 0; y < gridArray.GetLength(1); y++)
@@ -65,13 +44,13 @@ public class MyGrid
         gridArray[x, y].renderers.textMesh = CreateWorldText(gridArray[x, y], debugTextParent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 350, Color.white, TextAnchor.MiddleCenter, 0);
         gridArray[x, y].renderers.spriteRenderer = CreateSpriteRenderer(gridArray[x, y], renderersParent, GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f, 0);
 
-        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+        // Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
+        // Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
       }
     }
 
-    Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-    Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+    // Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
+    // Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
   }
 
   public Vector3 GetWorldPosition(int x, int y)
@@ -79,7 +58,7 @@ public class MyGrid
     return new Vector3(x, 0, y) * cellSize + originPosition;
   }
 
-  private Vector2 GetXY(Vector2 screenPos)
+  public Vector2 GetXY(Vector2 screenPos)
   {
     Ray ray = Camera.main.ScreenPointToRay(screenPos);
     RaycastHit hit;
@@ -150,6 +129,7 @@ public class MyGrid
     return textMesh;
   }
 
+  //Base version of SetValue, other overloads just lead here
   public void SetValue(int x, int y, CellData data)
   {
     if (x >= 0 && y >= 0 && x < width && y < height)
