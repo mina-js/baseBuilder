@@ -94,44 +94,44 @@ public class CellGrid
   }
 
   //Base version of SetValue, other overloads just lead here
-  public void SetValue(int x, int z, CellData data)
+  public void SetValue(int x, int z, CellData data, Vector2 XZOffsetFromTileMin = default(Vector2))
   {
     if (x >= 0 && z >= 0 && x < width && z < height)
     {
       data.renderers = data.renderers == null ? this.gridArray[x, z].renderers : data.renderers;
       this.gridArray[x, z] = data;
-      TriggerGridCellChanged(x, z);
+      TriggerGridCellChanged(x, z, XZOffsetFromTileMin);
     }
   }
 
-  public void SetValue(Vector3 worldPos, CellData value)
+  public void SetValue(Vector3 worldPos, CellData value, Vector2 XZOffsetFromTileMin = default(Vector2))
   {
     Vector2 xz = GetXZ(worldPos);
 
     if (xz.x < 0 && xz.y < 0) return;
 
-    SetValue((int)xz.x, (int)xz.y, value);
+    SetValue((int)xz.x, (int)xz.y, value, XZOffsetFromTileMin);
   }
 
-  public void SetValue(Vector3 worldPos, string fieldName, object value)
+  public void SetValue(Vector3 worldPos, string fieldName, object value, Vector2 XZOffsetFromTileMin = default(Vector2))
   {
     Vector2 xz = GetXZ(worldPos);
 
     if (xz.x < 0 && xz.y < 0) return;
 
-    SetValue((int)xz.x, (int)xz.y, fieldName, value);
+    SetValue((int)xz.x, (int)xz.y, fieldName, value, XZOffsetFromTileMin);
   }
 
-  public void SetValue(int x, int y, string fieldName, object value)
+  public void SetValue(int x, int y, string fieldName, object value, Vector2 XZOffsetFromTileMin = default(Vector2))
   {
     CellData data = GetValue(x, y);
 
     data?.GetType()?.GetField(fieldName)?.SetValue(data, value);
 
-    SetValue(x, y, data);
+    SetValue(x, y, data, XZOffsetFromTileMin);
   }
 
-  public void TriggerGridCellChanged(int x, int z)
+  public void TriggerGridCellChanged(int x, int z, Vector2 XZOffsetFromTileMin = default(Vector2))
   {
     //for now it just keeps numbers going, will eventually update sprites too
     if (isDebugging && gridArray[x, z].renderers.textMesh != null)
@@ -149,10 +149,12 @@ public class CellGrid
       Vector3 currentPos = gridArray[x, z].renderers.spriteRenderer.transform.position;
       Bounds bounds = gridArray[x, z].renderers.spriteRenderer.bounds;
 
-      if (currentPos.y <= originPosition.y + bounds.size.y / 2)
-      {
-        currentPos.y = originPosition.y + bounds.size.y / 2;
-      }
+      currentPos.y = originPosition.y + bounds.size.y / 2;
+
+      //check if its already at that offset from the tile center
+      Vector3 cellCenter = GetWorldPosition(x, z);
+      currentPos.x = cellCenter.x + XZOffsetFromTileMin.x;
+      currentPos.z = cellCenter.z + XZOffsetFromTileMin.y;
 
       gridArray[x, z].renderers.spriteRenderer.transform.position = currentPos;
 

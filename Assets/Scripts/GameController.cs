@@ -39,10 +39,17 @@ public class GameController : MonoBehaviour
     inputAction.FindActionMap("Building").FindAction("Click").performed += ctx => MouseClick(ctx);
   }
 
+  void OnValidate()
+  {
+    if (isUpgrading)
+      layerToTarget.PlaceSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx], upgradeable.XZOffsetFromTileCenter);
+  }
+
   void MouseClick(CallbackContext ctx)
   {
     Vector2 mousePosition = inputAction.FindAction("Pos").ReadValue<Vector2>();
-    layerToTarget.grid.SetValue(mousePosition, "sprite", spriteToPlace);
+    float cellSize = layerToTarget.grid.cellSize;
+    layerToTarget.grid.SetValue(mousePosition, "sprite", spriteToPlace, new Vector2(cellSize / 2, cellSize / 2));
   }
 
   void Update()
@@ -64,10 +71,6 @@ public class GameController : MonoBehaviour
     {
       isUpgrading = false;
       layerToTarget.RemoveCellHighlights();
-    }
-    else if (isUpgrading)
-    {
-      layerToTarget.PlaceSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx]);
     }
   }
 

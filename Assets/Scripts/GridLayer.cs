@@ -50,9 +50,9 @@ public class GridLayer : MonoBehaviour
     highlight.transform.SetParent(gameController.highlightsParent, false);
   }
 
-  public void PlaceSpriteAtCell(Vector2Int cell, Sprite sprite)
+  public void PlaceSpriteAtCell(Vector2Int cell, Sprite sprite, Vector2 XZOffsetFromTileCenter)
   {
-    grid.SetValue(cell.x, cell.y, "sprite", sprite);
+    grid.SetValue(cell.x, cell.y, "sprite", sprite, XZOffsetFromTileCenter);
   }
 
   public void RemoveCellHighlights()

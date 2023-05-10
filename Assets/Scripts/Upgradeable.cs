@@ -7,6 +7,7 @@ public class Upgradeable : ScriptableObject
 {
   public string gridId;
   public Vector2Int cell;
+  public Vector2 XZOffsetFromTileCenter;
   public List<Sprite> optionSprites;
   public Upgradeable(string gridId, Vector2Int cell)
   {
