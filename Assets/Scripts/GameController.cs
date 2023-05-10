@@ -4,8 +4,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
+public enum PlacementMode
+{
+  None,
+  Building,
+  Upgrading
+}
+
 public class GameController : MonoBehaviour
 {
+  public PlacementMode placementMode;
   public InputActionAsset inputAction;
   public Transform debugTextParent;
   public Transform renderersParent;
@@ -18,6 +26,10 @@ public class GameController : MonoBehaviour
   public bool isDebugging = true;
   public Upgradeable upgradeable;
   bool isUpgrading;
+
+  public Vector2 screenPos;
+
+  bool isTouching;
 
   [Range(0, 2)]
   public int upgradeableChoiceIdx;
@@ -34,22 +46,74 @@ public class GameController : MonoBehaviour
 
   void Start()
   {
+    isTouching = false;
+    placementMode = PlacementMode.Upgrading;
     upgradeableChoiceIdx = 0;
-    isUpgrading = false;
-    inputAction.FindActionMap("Building").FindAction("Click").performed += ctx => MouseClick(ctx);
+    isUpgrading = upgradeable != null;
+
+    inputAction.FindActionMap("Building").FindAction("Click").performed += ctx => { StartCoroutine(OnTouch(ctx)); };
+    inputAction.FindActionMap("Building").FindAction("Click").canceled += ctx => OnTouchEnd(ctx);
+
+    inputAction.FindAction("Pos").performed += context => screenPos = context.ReadValue<Vector2>();
+  }
+
+
+
+  IEnumerator OnTouch(CallbackContext ctx)
+  {
+    //if (!gameController.isGameRunning()) yield break;
+
+    OnStartOfTouch(ctx);
+
+    while (isTouching)
+    {
+      OnDrag(ctx);
+      yield return null;
+    }
+
+    OnTouchEnd(ctx);
+  }
+
+
+  void OnStartOfTouch(CallbackContext ctx = default(CallbackContext))
+  {
+    isTouching = true;
+
+    if (isAddingUpgrades())
+    {
+      AddUpgrade();
+    }
+    else if (isBuilding())
+    {
+      //start building stuff...
+    }
+  }
+
+  void OnDrag(CallbackContext ctx = default(CallbackContext))
+  {
+    if (!isBuilding()) return;
+
+    //do the building stuff...
+  }
+
+  void OnTouchEnd(CallbackContext ctx = default(CallbackContext))
+  {
+    Debug.Log("touch ended!");
+    isTouching = false;
+
+    //save the built stuff
   }
 
   void OnValidate()
   {
-    if (isUpgrading)
+    if (isUpgrading && layerToTarget.id == upgradeable.gridId && isAddingUpgrades())
       layerToTarget.PlaceSpriteAtCell(upgradeable.cell, upgradeable.optionSprites[upgradeableChoiceIdx], upgradeable.XZOffsetFromTileCenter);
   }
 
-  void MouseClick(CallbackContext ctx)
+  void AddUpgrade()
   {
-    Vector2 mousePosition = inputAction.FindAction("Pos").ReadValue<Vector2>();
-    float cellSize = layerToTarget.grid.cellSize;
-    layerToTarget.grid.SetValue(mousePosition, "sprite", spriteToPlace, new Vector2(cellSize / 2, cellSize / 2));
+    float centeringOffset = layerToTarget.grid.cellSize / 2f; //default to centering them
+    layerToTarget.grid.SetValue(screenPos, "sprite", spriteToPlace, new Vector2(centeringOffset, centeringOffset));
   }
 
   void Update()
@@ -90,5 +154,15 @@ public class GameController : MonoBehaviour
 
       }
     }
+  }
+
+  bool isAddingUpgrades()
+  {
+    return placementMode == PlacementMode.Upgrading;
+  }
+
+  bool isBuilding()
+  {
+    return placementMode == PlacementMode.Building;
   }
 }

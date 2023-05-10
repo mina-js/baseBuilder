@@ -366,6 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccff718e494254727961ab2ff366b728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  placementMode: 0
   inputAction: {fileID: -944628639613478452, guid: 687faf0c7102c4cef80dafd4107ac0ee, type: 3}
   debugTextParent: {fileID: 429141026}
   renderersParent: {fileID: 1770151484}
@@ -379,7 +380,8 @@ MonoBehaviour:
   numRows: 10
   numCols: 10
   isDebugging: 1
-  upgradeable: {fileID: 11400000, guid: 0a1153551991e4a90b89366861b1560f, type: 2}
+  upgradeable: {fileID: 0}
+  screenPos: {x: 0, y: 0}
   upgradeableChoiceIdx: 0
 --- !u!4 &974197171
 Transform:
@@ -509,7 +511,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1278457879
 Transform:
   m_ObjectHideFlags: 0
@@ -681,8 +683,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1385621242}
   m_LocalRotation: {x: 0.25583962, y: -0.65920115, z: 0.65920115, w: 0.25583962}
-  m_LocalPosition: {x: 619, y: -453, z: 620}
-  m_LocalScale: {x: 100, y: 1, z: 118.3}
+  m_LocalPosition: {x: 620, y: -453, z: 620}
+  m_LocalScale: {x: 95.86069, y: 1, z: 118.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -949,7 +951,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2131103792
 Transform:
   m_ObjectHideFlags: 0
