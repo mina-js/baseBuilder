@@ -13,4 +13,7 @@ public class CellData
 
   [field: SerializeField]
   public Sprite sprite;
+
+  //hmm theres gotta be a better way
+  public int numBlocks;
 }

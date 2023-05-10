@@ -148,6 +148,8 @@ public class CellGrid
 
     data?.GetType()?.GetField(fieldName)?.SetValue(data, value);
 
+    Debug.Log("in setting" + data.numBlocks);
+
     SetValue(x, y, data, XZOffsetFromTileMin);
   }
 

@@ -22,7 +22,7 @@ public class GridLayer : MonoBehaviour
     gameController = GameObject.Find("GameController").GetComponent<GameController>();
     meshRenderer = GetComponent<MeshRenderer>();
     InitializeGrid();
-    builder = new Builder(grid);
+    builder = new Builder(grid, gameController.buildParent, this);
   }
 
   void InitializeGrid()

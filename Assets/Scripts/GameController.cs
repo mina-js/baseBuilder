@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
   public Transform debugTextParent;
   public Transform renderersParent;
   public Transform highlightsParent;
+  public Transform buildParent;
   public GridLayer layerToTarget;
   public List<GridLayer> gridLayers;
   public Sprite spriteToPlace;
